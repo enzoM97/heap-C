@@ -7,13 +7,12 @@
 retorna un puntero a la cola de prioridad 
 retorna NULL si hubo error*/
 PQ* pq_create() {
-   
-	PQ* pq = malloc(sizeof(struct Heap));
 	/* AGREGUE SU CODIGO AQUI */
+	PQ* pq = malloc(sizeof(struct Heap));
 	if (NULL == pq) return NULL;
-	pq->cap = 7;
+	pq->cap = 10;
 	pq->size = 0;
-	pq->arr = (PrioValue*)malloc(sizeof(struct _PrioValue) * 8);
+	pq->arr = (PrioValue*)malloc(sizeof(struct _PrioValue) * 10);
 	if (NULL == pq->arr) {
 		free(pq);
 		return NULL;
@@ -27,36 +26,31 @@ Agrega un valor a la cola con la prioridad dada
 retorna TRUE si tuvo exito, FALSE si no
 */
 BOOLEAN pq_add(PQ* pq, void* valor, int prioridad) {
-   
 	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return FALSE;
-	PrioValue* hijo = NULL;
-	PrioValue* padre = NULL;
-	int i;
 	/* si el tamaño es igual a la capacidad-1, está lleno */
 	if (pq->size == pq->cap - 1 && !_redim(pq)) return FALSE;
 	/* se agrega al final del arreglo */
+	int i;
 	pq->size++;
  	pq->arr[pq->size].prio = prioridad;
 	pq->arr[pq->size].value = valor;
 	i = pq->size;
 	
-	/* si tiene menor prioridad flota hacia arriba */
+	/* si tiene menor prioridad flota hacia arriba 
+	- nodo padre = i / 2
+	- nodo actual = i
+	*/
 	while (i != 1 && pq->arr[i / 2].prio > pq->arr[i].prio) {
-		padre = &pq->arr[i / 2];
-		hijo = &pq->arr[i];
-
-		if (hijo->prio < padre->prio) {
-			int prio = padre->prio;
-			void* value = padre->value;
-			pq->arr[i / 2].prio = hijo->prio;
-			pq->arr[i / 2].value = hijo->value;
-			pq->arr[i].prio = prio;
-			pq->arr[i].value = value;
-		}
+		int prio = pq->arr[i / 2].prio;
+		void* value = pq->arr[i / 2].value;
+		pq->arr[i / 2].prio = pq->arr[i].prio;
+		pq->arr[i / 2].value = pq->arr[i].value;
+		pq->arr[i].prio = prio;
+		pq->arr[i].value = value;
+		
 		i = i / 2;
 	}
-
 	return TRUE;
 }
 
@@ -66,14 +60,10 @@ BOOLEAN pq_add(PQ* pq, void* valor, int prioridad) {
   retorna TRUE si tuvo EXITO
 */
 BOOLEAN pq_remove(PQ* pq, void** retVal) {
-
 	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return FALSE;
+	
 	/* Variables */
-	PrioValue* actual = NULL;
-	PrioValue* hizq = NULL;
-	PrioValue* hder = NULL;
-	PrioValue* tmp = NULL;
 	int tam;
 	int i = 1;
 
@@ -81,32 +71,34 @@ BOOLEAN pq_remove(PQ* pq, void** retVal) {
 	pq->arr[i] = pq->arr[pq->size];
 	pq->size--;
 
-	/* empieza desde la raiz */
+	/*
+	- raiz = i
+	- hijo izquierdo = 2 * i
+	- hijo derecho = (2 * i) + 1
+	*/
 	while ((2 * i) <= pq->size) {
-		actual = &pq->arr[i];
-		hizq = &pq->arr[2 * i];
-		hder = &pq->arr[(2 * i) + 1];
+		/* variables temporales para almacenar los datos del nodo raiz */
+		int prio = pq->arr[i].prio;
+		void* value = pq->arr[i].value;
 
-		if (hizq->prio < hder->prio) {
-			int prio = actual->prio;
-			void* value = actual->value;
-			pq->arr[i].prio = hizq->prio;
-			pq->arr[i].value = hizq->value;
+		/* si el hijo izq es menor que el hijo der */
+		if (pq->arr[2 * i].prio < pq->arr[(2 * i) + 1].prio) {
+			pq->arr[i].prio = pq->arr[2 * i].prio;
+			pq->arr[i].value = pq->arr[2 * i].value;
 			pq->arr[2 * i].prio = prio;
 			pq->arr[2 * i].value = value;
+
 			i = 2 * i;
 		}
 		else {
-			int prio = actual->prio;
-			void* value = actual->value;
-			pq->arr[i].prio = hder->prio;
-			pq->arr[i].value = hder->value;
+			pq->arr[i].prio = pq->arr[(2 * i) + 1].prio;
+			pq->arr[i].value = pq->arr[(2 * i) + 1].value;
 			pq->arr[(2 * i) + 1].prio = prio;
 			pq->arr[(2 * i) + 1].value = value;
+
 			i = (2 * i) + 1;
 		}
 	}
-
 	return TRUE;
 }
 
@@ -114,23 +106,19 @@ BOOLEAN pq_remove(PQ* pq, void** retVal) {
    retorna 0 si hubo error 
  */
 int pq_size(PQ* pq) {
-
-   	/* AGREGUE SU CODIGO AQUI */
-   if (NULL == pq) return 0;
-   return pq->size;
+	/* AGREGUE SU CODIGO AQUI */
+	if (NULL == pq) return 0;
+	return pq->size;
 }
 
 /* Destruye la cola de prioridad, 
 retorna TRUE si tuvo exito
 retorna FALSE si tuvo error*/
 BOOLEAN pq_destroy(PQ* pq) {
-   
-   /* AGREGUE SU CODIGO AQUI */
+	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return FALSE;
 	free(pq->arr);
-	pq->arr = NULL;
 	free(pq);
-	pq = NULL;
 	return TRUE;
 }
 
@@ -153,6 +141,7 @@ int _redim(PQ* pq) {
 	pq->cap = pq->cap * 2;
 	return 1;
 }
+
 /*
 Imprime los elementos y sus prioridades arreglo
 */
