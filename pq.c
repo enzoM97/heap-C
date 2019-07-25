@@ -7,7 +7,6 @@
 retorna un puntero a la cola de prioridad 
 retorna NULL si hubo error*/
 PQ* pq_create() {
-	/* AGREGUE SU CODIGO AQUI */
 	PQ* pq = malloc(sizeof(struct Heap));
 	if (NULL == pq) return NULL;
 	pq->cap = 10;
@@ -26,9 +25,8 @@ Agrega un valor a la cola con la prioridad dada
 retorna TRUE si tuvo exito, FALSE si no
 */
 BOOLEAN pq_add(PQ* pq, void* valor, int prioridad) {
-	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return FALSE;
-	/* si el tamaño es igual a la capacidad-1, está lleno */
+	/* si el tamaÃ±o es igual a la capacidad-1, estÃ¡ lleno */
 	if (pq->size == pq->cap - 1 && !_redim(pq)) return FALSE;
 	/* se agrega al final del arreglo */
 	int i;
@@ -60,7 +58,6 @@ BOOLEAN pq_add(PQ* pq, void* valor, int prioridad) {
   retorna TRUE si tuvo EXITO
 */
 BOOLEAN pq_remove(PQ* pq, void** retVal) {
-	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return FALSE;
 	
 	/* Variables */
@@ -102,11 +99,10 @@ BOOLEAN pq_remove(PQ* pq, void** retVal) {
 	return TRUE;
 }
 
-/* retorna el tamaño de la cola de prioridad, 
+/* retorna el tamaÃ±o de la cola de prioridad, 
    retorna 0 si hubo error 
  */
 int pq_size(PQ* pq) {
-	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return 0;
 	return pq->size;
 }
@@ -115,7 +111,6 @@ int pq_size(PQ* pq) {
 retorna TRUE si tuvo exito
 retorna FALSE si tuvo error*/
 BOOLEAN pq_destroy(PQ* pq) {
-	/* AGREGUE SU CODIGO AQUI */
 	if (NULL == pq) return FALSE;
 	free(pq->arr);
 	free(pq);
